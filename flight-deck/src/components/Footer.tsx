@@ -1,0 +1,1 @@
+import { profile } from '../data/profile.ts';\n\nexport default function Footer() {\n  return (\n    <footer\n      className=\"py-6 text-center text-xs\"\n      style={{ color: 'var(--color-line)', fontFamily: 'var(--font-mono)' }}\n    >\n      &copy; {new Date().getFullYear()} {profile.meta.name}. Built from scratch, no templates.\n    </footer>\n  );\n}
