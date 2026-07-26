@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState, useEffect, Suspense } from 'react';
+import { useRef, useMemo, useState, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
@@ -14,102 +14,13 @@ import { profile } from '../data/profile';
  */
 
 const GLTF_URL = '/drone/scene.gltf';
-const PROP_SPIN_SPEED = 25;
+const PROP_SPIN_SPEED = 30;
 
-// Preload the model
 useGLTF.preload(GLTF_URL);
 
 interface DroneProps {
   showHotspots?: boolean;
   onHotspotClick?: (part: string, label: string, blurb: string) => void;
-}
-
-// Spinning propeller disc — replaces static prop meshes
-function PropellerDisc({ position }: { position: THREE.Vector3 }) {
-  const ref = useRef<THREE.Mesh>(null!);
-
-  useFrame((_, delta) => {
-    if (ref.current) {
-      ref.current.rotation.y += PROP_SPIN_SPEED * delta;
-    }
-  });
-
-  return (
-    <mesh ref={ref} position={position} rotation={[0, 0, 0]}>
-      <cylinderGeometry args={[0.55, 0.55, 0.01, 32]} />
-      <meshStandardMaterial
-        color="#0a0a0a"
-        transparent
-        opacity={0.25}
-        side={THREE.DoubleSide}
-        depthWrite={false}
-      />
-    </mesh>
-  );
-}
-
-// Propeller blur disc — semi-transparent spinning effect
-function PropBlur({ position }: { position: THREE.Vector3 }) {
-  const ref = useRef<THREE.Mesh>(null!);
-
-  useFrame((_, delta) => {
-    if (ref.current) {
-      ref.current.rotation.z += PROP_SPIN_SPEED * 0.5 * delta;
-    }
-  });
-
-  return (
-    <mesh ref={ref} position={position}>
-      <circleGeometry args={[0.5, 32]} />
-      <meshStandardMaterial
-        color="#6FC7D4"
-        transparent
-        opacity={0.06}
-        side={THREE.DoubleSide}
-        depthWrite={false}
-        toneMapped={false}
-      />
-    </mesh>
-  );
-}
-
-// LED navigation lights
-function NavLights() {
-  const frontLeftRef = useRef<THREE.PointLight>(null!);
-  const frontRightRef = useRef<THREE.PointLight>(null!);
-  const rearRef = useRef<THREE.PointLight>(null!);
-
-  useFrame(({ clock }) => {
-    const pulse = 0.5 + 0.5 * Math.sin(clock.elapsedTime * 4);
-    if (frontLeftRef.current) frontLeftRef.current.intensity = 2 + pulse * 3;
-    if (frontRightRef.current) frontRightRef.current.intensity = 2 + pulse * 3;
-    if (rearRef.current) rearRef.current.intensity = 1 + pulse * 2;
-  });
-
-  return (
-    <>
-      {/* Front-left — green (port) */}
-      <pointLight ref={frontLeftRef} position={[0.6, 0.1, 0.6]} color="#00ff44" distance={3} decay={2} />
-      <mesh position={[0.6, 0.1, 0.6]}>
-        <sphereGeometry args={[0.03, 8, 8]} />
-        <meshStandardMaterial color="#00ff44" emissive="#00ff44" emissiveIntensity={4} toneMapped={false} />
-      </mesh>
-
-      {/* Front-right — red (starboard) */}
-      <pointLight ref={frontRightRef} position={[-0.6, 0.1, 0.6]} color="#ff2200" distance={3} decay={2} />
-      <mesh position={[-0.6, 0.1, 0.6]}>
-        <sphereGeometry args={[0.03, 8, 8]} />
-        <meshStandardMaterial color="#ff2200" emissive="#ff2200" emissiveIntensity={4} toneMapped={false} />
-      </mesh>
-
-      {/* Rear — white strobe */}
-      <pointLight ref={rearRef} position={[0, 0.1, -0.7]} color="#ffffff" distance={4} decay={2} />
-      <mesh position={[0, 0.1, -0.7]}>
-        <sphereGeometry args={[0.025, 8, 8]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={6} toneMapped={false} />
-      </mesh>
-    </>
-  );
 }
 
 function HotspotMarker({
@@ -160,21 +71,33 @@ function DroneModel({ showHotspots, onHotspotClick }: DroneProps) {
   const scrollProgress = useFlightStore((s) => s.scrollProgress);
   const reducedMotion = useFlightStore((s) => s.reducedMotion);
 
-  // Load the GLTF model
   const { scene } = useGLTF(GLTF_URL);
 
-  // Clone the scene so we can modify materials safely
+  // Collect references to propeller nodes for spinning
+  const propRefs = useRef<THREE.Object3D[]>([]);
+
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
+    propRefs.current = [];
+
     clone.traverse((child) => {
+      // Collect propeller/spinning nodes by name pattern
+      const name = child.name.toLowerCase();
+      if (
+        name.includes('spin') ||
+        name.includes('spine') ||
+        name.includes('pneu')
+      ) {
+        propRefs.current.push(child);
+      }
+
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
-        // Enhance materials with better metalness/roughness for our dark scene
         const mat = mesh.material as THREE.MeshStandardMaterial;
         if (mat.isMeshStandardMaterial) {
-          mat.envMapIntensity = 1.5;
+          mat.envMapIntensity = 1.2;
           mat.needsUpdate = true;
         }
       }
@@ -182,16 +105,19 @@ function DroneModel({ showHotspots, onHotspotClick }: DroneProps) {
     return clone;
   }, [scene]);
 
-  // Propeller positions on the DJI FPV (approximate)
-  const propPositions = useMemo(() => [
-    new THREE.Vector3(0.55, 0.12, 0.55),   // front-left
-    new THREE.Vector3(-0.55, 0.12, 0.55),  // front-right
-    new THREE.Vector3(0.55, 0.12, -0.55),  // rear-left
-    new THREE.Vector3(-0.55, 0.12, -0.55), // rear-right
-  ], []);
+  // Spin propellers + move drone along flight path
+  useFrame((state, delta) => {
+    // Spin propellers
+    if (!reducedMotion) {
+      propRefs.current.forEach((prop, i) => {
+        // Alternate spin direction: even = CW, odd = CCW
+        const dir = i % 2 === 0 ? 1 : -1;
+        prop.rotation.y += PROP_SPIN_SPEED * dir * delta;
+      });
+    }
 
-  useFrame(({ clock }) => {
     if (!groupRef.current) return;
+    const clock = state.clock;
 
     if (reducedMotion) {
       const t = clock.elapsedTime;
@@ -221,7 +147,6 @@ function DroneModel({ showHotspots, onHotspotClick }: DroneProps) {
       groupRef.current.rotation.y = rotation.y;
       groupRef.current.rotation.z = rotation.z;
 
-      // Subtle breathing overlay
       const t = clock.elapsedTime;
       groupRef.current.position.y += Math.sin(t * 1.2) * 0.03;
     }
@@ -229,30 +154,17 @@ function DroneModel({ showHotspots, onHotspotClick }: DroneProps) {
 
   const hotspotData = profile.flagship.hotspots;
   const hotspotPositions: Record<string, [number, number, number]> = {
-    flightController: [0, 0.15, 0],
-    onboardComputer: [0.15, 0.15, -0.15],
-    visionPayload: [0, -0.15, 0.35],
-    motorsEscs: [0.55, 0.12, 0.55],
-    groundLink: [-0.15, 0.15, 0.15],
+    flightController: [0, 0.1, 0],
+    onboardComputer: [0.12, 0.1, -0.12],
+    visionPayload: [0, -0.1, 0.25],
+    motorsEscs: [0.4, 0.08, 0.4],
+    groundLink: [-0.12, 0.1, 0.12],
   };
 
   return (
-    <group ref={groupRef} scale={1.8}>
-      {/* Real DJI FPV model */}
+    <group ref={groupRef} scale={1.1}>
       <primitive object={clonedScene} />
 
-      {/* Spinning propeller discs overlaid on the model */}
-      {propPositions.map((pos, i) => (
-        <group key={i}>
-          <PropellerDisc position={pos} />
-          <PropBlur position={pos} />
-        </group>
-      ))}
-
-      {/* Navigation LED lights */}
-      <NavLights />
-
-      {/* Hotspots (WP01 only) */}
       {showHotspots &&
         hotspotData.map((hs) => {
           const pos = hotspotPositions[hs.part] ?? [0, 0.3, 0];

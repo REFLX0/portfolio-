@@ -95,7 +95,7 @@ export default function Hero() {
           <Button href={`mailto:${meta.email}`}>Send message</Button>
         </div>
 
-        <div style={{ maxWidth: 400 }}>
+        <div style={{ maxWidth: 400 }} className="hidden sm:block">
           <h3
             className="mb-3 text-xs font-mono tracking-widest text-muted"
             style={{ fontFamily: 'var(--font-mono)' }}

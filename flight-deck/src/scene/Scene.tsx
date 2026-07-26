@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useRef } from 'react';
+import { Suspense, useMemo, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Line, Environment } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
@@ -11,21 +11,36 @@ import Drone from './Drone';
 import CameraRig from './CameraRig';
 import { flightCurve } from './FlightPath';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return isMobile;
+}
+
 function GroundGrid() {
   const gridSize = 80;
   const gridDivisions = 40;
   const step = gridSize / gridDivisions;
+  const isMobile = useIsMobile();
 
   const lines = useMemo(() => {
     const pts: THREE.Vector3[][] = [];
-    for (let i = -gridDivisions / 2; i <= gridDivisions / 2; i++) {
-      const x = i * step;
-      pts.push([new THREE.Vector3(x, -1, -gridSize / 2), new THREE.Vector3(x, -1, gridSize / 2)]);
-      const z = i * step - gridSize / 4;
-      pts.push([new THREE.Vector3(-gridSize / 2, -1, z), new THREE.Vector3(gridSize / 2, -1, z)]);
+    const divs = isMobile ? 20 : gridDivisions;
+    const size = isMobile ? 40 : gridSize;
+    const s = size / divs;
+    for (let i = -divs / 2; i <= divs / 2; i++) {
+      const x = i * s;
+      pts.push([new THREE.Vector3(x, -1, -size / 2), new THREE.Vector3(x, -1, size / 2)]);
+      const z = i * s - size / 4;
+      pts.push([new THREE.Vector3(-size / 2, -1, z), new THREE.Vector3(size / 2, -1, z)]);
     }
     return pts;
-  }, []);
+  }, [isMobile]);
 
   return (
     <group>
@@ -67,18 +82,21 @@ function FlightPathLine() {
 }
 
 function Particles() {
-  const count = 200;
+  const isMobile = useIsMobile();
+  const count = isMobile ? 60 : 200;
   const ref = useRef<THREE.Points>(null!);
 
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3);
+    const spread = isMobile ? 30 : 60;
+    const height = isMobile ? 10 : 20;
     for (let i = 0; i < count; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 60;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 60;
+      arr[i * 3] = (Math.random() - 0.5) * spread;
+      arr[i * 3 + 1] = (Math.random() - 0.5) * height;
+      arr[i * 3 + 2] = (Math.random() - 0.5) * spread;
     }
     return arr;
-  }, []);
+  }, [count, isMobile]);
 
   useFrame(({ clock }) => {
     if (ref.current) {
@@ -112,9 +130,10 @@ interface SceneProps {
 }
 
 export default function Scene({ showHotspots, onHotspotClick }: SceneProps) {
+  const isMobile = useIsMobile();
   const dpr = typeof window !== 'undefined'
-    ? window.innerWidth < 768
-      ? Math.min(window.devicePixelRatio, 1.5)
+    ? isMobile
+      ? 1
       : Math.min(window.devicePixelRatio, 2)
     : 1;
 
@@ -128,9 +147,9 @@ export default function Scene({ showHotspots, onHotspotClick }: SceneProps) {
         Interactive 3D portfolio of {profile.meta.name}. A drone flies through six waypoints: {sectionSummary}.
       </div>
       <Canvas
-        camera={{ fov: 50, near: 0.1, far: 200, position: [0, 2, 8] }}
+        camera={{ fov: isMobile ? 60 : 50, near: 0.1, far: 200, position: [0, 2, 8] }}
         dpr={dpr}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
         style={{ background: 'transparent' }}
       >
         <Suspense fallback={null}>
@@ -143,17 +162,18 @@ export default function Scene({ showHotspots, onHotspotClick }: SceneProps) {
           <CameraRig />
           <fog attach="fog" args={['#0A0D0F', 15, 60]} />
 
+          {/* Only bloom on desktop — skip on mobile for performance */}
           <EffectComposer>
             <Bloom
               luminanceThreshold={0.6}
               luminanceSmoothing={0.9}
-              intensity={0.8}
+              intensity={isMobile ? 0.3 : 0.8}
               mipmapBlur
             />
             <Vignette
               eskil={false}
               offset={0.1}
-              darkness={0.8}
+              darkness={isMobile ? 0.5 : 0.8}
             />
           </EffectComposer>
         </Suspense>
