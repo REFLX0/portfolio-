@@ -1,57 +1,114 @@
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, useEffect, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { RoundedBox } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { useFlightStore } from '../store/useFlightStore';
 import { getFlightTransform } from './FlightPath';
 import { profile } from '../data/profile';
+
+/*
+ * 3D Model Credit:
+ * "Dji FPV by SDC - High performance drone" by SDC PERFORMANCE™
+ * https://sketchfab.com/3d-models/dji-fpv-by-sdc-high-performance-drone-d471ea8c6235457b8e131842e2cf3783
+ * Licensed under CC-BY-4.0
+ */
+
+const GLTF_URL = '/drone/scene.gltf';
+const PROP_SPIN_SPEED = 25;
+
+// Preload the model
+useGLTF.preload(GLTF_URL);
 
 interface DroneProps {
   showHotspots?: boolean;
   onHotspotClick?: (part: string, label: string, blurb: string) => void;
 }
 
-const ARM_LENGTH = 1.8;
-const ARM_ANGLE_OFFSET = Math.PI / 4; // 45° — diagonal arms
-const BODY_SIZE: [number, number, number] = [0.8, 0.22, 0.8];
-const PROP_SPIN_SPEED = 12;
-
-function MotorPod({ position, isFront }: { position: THREE.Vector3; isFront: boolean }) {
-  const propRef = useRef<THREE.Mesh>(null!);
+// Spinning propeller disc — replaces static prop meshes
+function PropellerDisc({ position }: { position: THREE.Vector3 }) {
+  const ref = useRef<THREE.Mesh>(null!);
 
   useFrame((_, delta) => {
-    if (propRef.current) {
-      propRef.current.rotation.y += PROP_SPIN_SPEED * delta;
+    if (ref.current) {
+      ref.current.rotation.y += PROP_SPIN_SPEED * delta;
     }
   });
 
-  const lightColor = isFront ? '#6FC7D4' : '#ff3344';
+  return (
+    <mesh ref={ref} position={position} rotation={[0, 0, 0]}>
+      <cylinderGeometry args={[0.55, 0.55, 0.01, 32]} />
+      <meshStandardMaterial
+        color="#0a0a0a"
+        transparent
+        opacity={0.25}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}
+
+// Propeller blur disc — semi-transparent spinning effect
+function PropBlur({ position }: { position: THREE.Vector3 }) {
+  const ref = useRef<THREE.Mesh>(null!);
+
+  useFrame((_, delta) => {
+    if (ref.current) {
+      ref.current.rotation.z += PROP_SPIN_SPEED * 0.5 * delta;
+    }
+  });
 
   return (
-    <group position={position}>
-      {/* Motor housing */}
-      <mesh position={[0, 0.15, 0]} castShadow>
-        <cylinderGeometry args={[0.14, 0.16, 0.22, 8]} />
-        <meshStandardMaterial color="#2a2d32" roughness={0.5} metalness={0.7} />
+    <mesh ref={ref} position={position}>
+      <circleGeometry args={[0.5, 32]} />
+      <meshStandardMaterial
+        color="#6FC7D4"
+        transparent
+        opacity={0.06}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+        toneMapped={false}
+      />
+    </mesh>
+  );
+}
+
+// LED navigation lights
+function NavLights() {
+  const frontLeftRef = useRef<THREE.PointLight>(null!);
+  const frontRightRef = useRef<THREE.PointLight>(null!);
+  const rearRef = useRef<THREE.PointLight>(null!);
+
+  useFrame(({ clock }) => {
+    const pulse = 0.5 + 0.5 * Math.sin(clock.elapsedTime * 4);
+    if (frontLeftRef.current) frontLeftRef.current.intensity = 2 + pulse * 3;
+    if (frontRightRef.current) frontRightRef.current.intensity = 2 + pulse * 3;
+    if (rearRef.current) rearRef.current.intensity = 1 + pulse * 2;
+  });
+
+  return (
+    <>
+      {/* Front-left — green (port) */}
+      <pointLight ref={frontLeftRef} position={[0.6, 0.1, 0.6]} color="#00ff44" distance={3} decay={2} />
+      <mesh position={[0.6, 0.1, 0.6]}>
+        <sphereGeometry args={[0.03, 8, 8]} />
+        <meshStandardMaterial color="#00ff44" emissive="#00ff44" emissiveIntensity={4} toneMapped={false} />
       </mesh>
 
-      {/* Spinning propeller — two blades */}
-      <mesh ref={propRef} position={[0, 0.3, 0]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[1.2, 0.02, 0.1]} />
-        <meshStandardMaterial color="#1a1d22" roughness={0.4} metalness={0.6} />
+      {/* Front-right — red (starboard) */}
+      <pointLight ref={frontRightRef} position={[-0.6, 0.1, 0.6]} color="#ff2200" distance={3} decay={2} />
+      <mesh position={[-0.6, 0.1, 0.6]}>
+        <sphereGeometry args={[0.03, 8, 8]} />
+        <meshStandardMaterial color="#ff2200" emissive="#ff2200" emissiveIntensity={4} toneMapped={false} />
       </mesh>
 
-      {/* Navigation light */}
-      <mesh position={[0, -0.05, isFront ? 0.2 : -0.2]}>
-        <sphereGeometry args={[0.04, 8, 8]} />
-        <meshStandardMaterial
-          color={lightColor}
-          emissive={lightColor}
-          emissiveIntensity={2}
-          toneMapped={false}
-        />
+      {/* Rear — white strobe */}
+      <pointLight ref={rearRef} position={[0, 0.1, -0.7]} color="#ffffff" distance={4} decay={2} />
+      <mesh position={[0, 0.1, -0.7]}>
+        <sphereGeometry args={[0.025, 8, 8]} />
+        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={6} toneMapped={false} />
       </mesh>
-    </group>
+    </>
   );
 }
 
@@ -98,32 +155,45 @@ function HotspotMarker({
   );
 }
 
-export default function Drone({ showHotspots = false, onHotspotClick }: DroneProps) {
+function DroneModel({ showHotspots, onHotspotClick }: DroneProps) {
   const groupRef = useRef<THREE.Group>(null!);
   const scrollProgress = useFlightStore((s) => s.scrollProgress);
   const reducedMotion = useFlightStore((s) => s.reducedMotion);
 
-  // Compute arm positions (4 diagonal arms)
-  const armPositions = useMemo(() => {
-    const positions: { pos: THREE.Vector3; isFront: boolean }[] = [];
-    for (let i = 0; i < 4; i++) {
-      const angle = ARM_ANGLE_OFFSET + (i * Math.PI) / 2;
-      const x = Math.cos(angle) * ARM_LENGTH;
-      const z = Math.sin(angle) * ARM_LENGTH;
-      // Front arms are those with positive Z
-      positions.push({
-        pos: new THREE.Vector3(x, 0, z),
-        isFront: z > 0,
-      });
-    }
-    return positions;
-  }, []);
+  // Load the GLTF model
+  const { scene } = useGLTF(GLTF_URL);
+
+  // Clone the scene so we can modify materials safely
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        // Enhance materials with better metalness/roughness for our dark scene
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        if (mat.isMeshStandardMaterial) {
+          mat.envMapIntensity = 1.5;
+          mat.needsUpdate = true;
+        }
+      }
+    });
+    return clone;
+  }, [scene]);
+
+  // Propeller positions on the DJI FPV (approximate)
+  const propPositions = useMemo(() => [
+    new THREE.Vector3(0.55, 0.12, 0.55),   // front-left
+    new THREE.Vector3(-0.55, 0.12, 0.55),  // front-right
+    new THREE.Vector3(0.55, 0.12, -0.55),  // rear-left
+    new THREE.Vector3(-0.55, 0.12, -0.55), // rear-right
+  ], []);
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
 
     if (reducedMotion) {
-      // Gentle idle hover only
       const t = clock.elapsedTime;
       groupRef.current.position.y = 0.3 + Math.sin(t * 0.8) * 0.1;
       groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.05;
@@ -133,7 +203,6 @@ export default function Drone({ showHotspots = false, onHotspotClick }: DronePro
     }
 
     if (scrollProgress < 0.02) {
-      // Idle state — gentle hover and sway before scroll engages
       const t = clock.elapsedTime;
       groupRef.current.position.set(
         Math.sin(t * 0.4) * 0.15,
@@ -146,102 +215,44 @@ export default function Drone({ showHotspots = false, onHotspotClick }: DronePro
         0,
       );
     } else {
-      // In-flight — driven by scroll
       const { position, rotation } = getFlightTransform(scrollProgress);
       groupRef.current.position.copy(position);
       groupRef.current.rotation.x = rotation.x;
       groupRef.current.rotation.y = rotation.y;
       groupRef.current.rotation.z = rotation.z;
 
-      // Subtle idle overlay (breathing)
+      // Subtle breathing overlay
       const t = clock.elapsedTime;
       groupRef.current.position.y += Math.sin(t * 1.2) * 0.03;
     }
   });
 
   const hotspotData = profile.flagship.hotspots;
-  // Map hotspot parts to 3D positions on the drone
   const hotspotPositions: Record<string, [number, number, number]> = {
     flightController: [0, 0.15, 0],
     onboardComputer: [0.15, 0.15, -0.15],
-    visionPayload: [0, -0.25, 0.25],
-    motorsEscs: [ARM_LENGTH * 0.7, 0, ARM_LENGTH * 0.7],
+    visionPayload: [0, -0.15, 0.35],
+    motorsEscs: [0.55, 0.12, 0.55],
     groundLink: [-0.15, 0.15, 0.15],
   };
 
   return (
-    <group ref={groupRef}>
-      {/* ── Body ── */}
-      <RoundedBox args={BODY_SIZE} radius={0.06} smoothness={4} castShadow>
-        <meshStandardMaterial
-          color="#1a1d22"
-          roughness={0.4}
-          metalness={0.6}
-        />
-      </RoundedBox>
+    <group ref={groupRef} scale={1.8}>
+      {/* Real DJI FPV model */}
+      <primitive object={clonedScene} />
 
-      {/* Centerline emissive seam — trace color */}
-      <mesh position={[0, 0.12, 0]}>
-        <boxGeometry args={[0.02, 0.02, 0.75]} />
-        <meshStandardMaterial
-          color="#6FC7D4"
-          emissive="#6FC7D4"
-          emissiveIntensity={1.5}
-          toneMapped={false}
-        />
-      </mesh>
-
-      {/* ── Arms ── */}
-      {armPositions.map(({ pos, isFront }, i) => (
+      {/* Spinning propeller discs overlaid on the model */}
+      {propPositions.map((pos, i) => (
         <group key={i}>
-          {/* Arm tube */}
-          <mesh
-            position={[pos.x * 0.5, 0, pos.z * 0.5]}
-            rotation={[0, -Math.atan2(pos.z, pos.x), 0]}
-          >
-            <boxGeometry args={[ARM_LENGTH, 0.06, 0.06]} />
-            <meshStandardMaterial color="#22252a" roughness={0.5} metalness={0.6} />
-          </mesh>
-          {/* Motor pod + prop + nav light */}
-          <MotorPod position={pos} isFront={isFront} />
+          <PropellerDisc position={pos} />
+          <PropBlur position={pos} />
         </group>
       ))}
 
-      {/* ── Landing skids ── */}
-      {[-0.25, 0.25].map((xOff) => (
-        <group key={`skid-${xOff}`}>
-          {/* Vertical leg */}
-          <mesh position={[xOff, -0.25, 0]}>
-            <boxGeometry args={[0.03, 0.2, 0.03]} />
-            <meshStandardMaterial color="#22252a" roughness={0.5} metalness={0.5} />
-          </mesh>
-          {/* Horizontal skid bar */}
-          <mesh position={[xOff, -0.35, 0]}>
-            <boxGeometry args={[0.6, 0.02, 0.03]} />
-            <meshStandardMaterial color="#22252a" roughness={0.5} metalness={0.5} />
-          </mesh>
-          {/* Connecting rod to opposite side */}
-          <mesh position={[0, -0.35, 0]}>
-            <boxGeometry args={[Math.abs(xOff) * 2, 0.02, 0.02]} />
-            <meshStandardMaterial color="#1a1d22" roughness={0.5} metalness={0.5} />
-          </mesh>
-        </group>
-      ))}
+      {/* Navigation LED lights */}
+      <NavLights />
 
-      {/* Camera gimbal — a nod to the real YOLO perception pipeline from the CV */}
-      <group position={[0, -0.18, 0.2]}>
-        <mesh>
-          <sphereGeometry args={[0.08, 12, 12]} />
-          <meshStandardMaterial color="#2a2d32" roughness={0.3} metalness={0.7} />
-        </mesh>
-        {/* Lens — rotated cylinder for the camera lens nodule */}
-        <mesh position={[0, 0, 0.07]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.03, 0.03, 0.04, 12]} />
-          <meshStandardMaterial color="#111" roughness={0.2} metalness={0.8} />
-        </mesh>
-      </group>
-
-      {/* ── Hotspots (WP01 only) ── */}
+      {/* Hotspots (WP01 only) */}
       {showHotspots &&
         hotspotData.map((hs) => {
           const pos = hotspotPositions[hs.part] ?? [0, 0.3, 0];
@@ -257,5 +268,13 @@ export default function Drone({ showHotspots = false, onHotspotClick }: DronePro
           );
         })}
     </group>
+  );
+}
+
+export default function Drone(props: DroneProps) {
+  return (
+    <Suspense fallback={null}>
+      <DroneModel {...props} />
+    </Suspense>
   );
 }
