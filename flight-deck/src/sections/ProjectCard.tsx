@@ -1,1 +1,38 @@
-import Badge from '../components/Badge.tsx';\n\ninterface Project {\n  title: string;\n  category: string;\n  points: string[];\n  stack: string[];\n}\n\ninterface ProjectCardProps {\n  project: Project;\n  index: number;\n}\n\nexport default function ProjectCard({ project, index }: ProjectCardProps) {\n  return (\n    <article className=\"project-card\" style={{ animationDelay: `${index * 50}ms` }}>\n      <div\n        className=\"mb-2 text-xs font-mono tracking-wider\"\n        style={{\n          fontFamily: 'var(--font-mono)',\n          color: 'var(--color-trace)',\n          fontSize: '0.65rem',\n        }}\n      >\n        {project.category}\n      </div>\n      <h3\n        className=\"mb-3\"\n        style={{\n          fontFamily: 'var(--font-display)',\n          fontSize: '1.05rem',\n          fontWeight: 600,\n          color: 'var(--color-paper)',\n          lineHeight: 1.3,\n        }}\n      >\n        {project.title}\n      </h3>\n      <ul className=\"mb-4 flex flex-col gap-2\" style={{ listStyle: 'none', padding: 0, margin: 0 }}>\n        {project.points.map((point, i) => (\n          <li\n            key={i}\n            className=\"text-sm text-muted\"\n            style={{ lineHeight: 1.55, paddingLeft: 10, borderLeft: '2px solid var(--color-line)' }}\n          >\n            {point}\n          </li>\n        ))}\n      </ul>\n      <div className=\"flex flex-wrap gap-1.5\">\n        {project.stack.map((tech) => (\n          <Badge key={tech}>{tech}</Badge>\n        ))}\n      </div>\n    </article>\n  );\n}
+import Badge from '../components/Badge.tsx';
+
+interface Project {
+  title: string;
+  category: string;
+  points: string[];
+  stack: string[];
+}
+
+interface ProjectCardProps {
+  project: Project;
+  index: number;
+}
+
+export default function ProjectCard({ project, index }: ProjectCardProps) {
+  return (
+    <article className="project-card" style={{ animationDelay: `${index * 50}ms` }}>
+      <div className="mb-2 text-xs font-mono tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-trace)', fontSize: '0.65rem' }}>
+        {project.category}
+      </div>
+      <h3 className="mb-3" style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-paper)', lineHeight: 1.3 }}>
+        {project.title}
+      </h3>
+      <ul className="mb-4 flex flex-col gap-2" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {project.points.map((point, i) => (
+          <li key={i} className="text-sm text-muted" style={{ lineHeight: 1.55, paddingLeft: 10, borderLeft: '2px solid var(--color-line)' }}>
+            {point}
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-wrap gap-1.5">
+        {project.stack.map((tech) => (
+          <Badge key={tech}>{tech}</Badge>
+        ))}
+      </div>
+    </article>
+  );
+}

@@ -1,1 +1,143 @@
-import { profile } from '../data/profile.ts';\nimport SectionEyebrow from '../components/SectionEyebrow.tsx';\nimport Button from '../components/Button.tsx';\n\nexport default function Hero() {\n  const { meta, summary, stats, languages } = profile;\n\n  return (\n    <section className=\"waypoint-section\" data-waypoint={0} aria-label=\"Origin — About Mohamed Aziz Jlassi\">\n      <div className=\"section-content\">\n        <SectionEyebrow waypointIndex={0} />\n\n        <h1\n          className=\"mb-2\"\n          style={{\n            fontFamily: 'var(--font-display)',\n            fontSize: 'clamp(2.2rem, 5vw, 4rem)',\n            fontWeight: 700,\n            color: 'var(--color-paper)',\n            lineHeight: 1.1,\n          }}\n        >\n          {meta.name}\n        </h1>\n        <p\n          className=\"mb-1\"\n          style={{\n            fontFamily: 'var(--font-display)',\n            fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',\n            fontWeight: 500,\n            color: 'var(--color-signal)',\n          }}\n        >\n          {meta.role}\n        </p>\n        <p\n          className=\"mb-6 text-muted\"\n          style={{\n            fontFamily: 'var(--font-body)',\n            fontSize: '0.9rem',\n            maxWidth: 640,\n            lineHeight: 1.6,\n          }}\n        >\n          {meta.focus}\n        </p>\n\n        {/* Summary */}\n        <p\n          className=\"mb-8\"\n          style={{\n            fontFamily: 'var(--font-body)',\n            fontSize: '0.95rem',\n            lineHeight: 1.7,\n            maxWidth: 700,\n            color: 'var(--color-paper)',\n          }}\n        >\n          {summary}\n        </p>\n\n        {/* Stat chips */}\n        <div className=\"flex flex-wrap gap-3 mb-8\">\n          {stats.map((s) => (\n            <div\n              key={s.label}\n              className=\"px-4 py-2 rounded-md\"\n              style={{\n                background: 'var(--color-panel)',\n                border: '1px solid var(--color-line)',\n              }}\n            >\n              <div\n                style={{\n                  fontFamily: 'var(--font-mono)',\n                  fontSize: '1.1rem',\n                  fontWeight: 500,\n                  color: 'var(--color-signal)',\n                }}\n              >\n                {s.value}\n              </div>\n              <div\n                className=\"text-muted\"\n                style={{ fontSize: '0.7rem', marginTop: 2 }}\n              >\n                {s.label}\n              </div>\n            </div>\n          ))}\n        </div>\n\n        {/* CTA buttons */}\n        <div className=\"flex flex-wrap gap-3 mb-10\">\n          <Button href={meta.github} target=\"_blank\" rel=\"noopener noreferrer\">\n            View GitHub\n          </Button>\n          <Button href={`mailto:${meta.email}`}>Send message</Button>\n        </div>\n\n        {/* Languages */}\n        <div style={{ maxWidth: 400 }}>\n          <h3\n            className=\"mb-3 text-xs font-mono tracking-widest text-muted\"\n            style={{ fontFamily: 'var(--font-mono)' }}\n          >\n            LANGUAGES\n          </h3>\n          <div className=\"flex flex-col gap-2\">\n            {languages.map((lang) => {\n              const scale = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Native'];\n              const activeIndex = scale.indexOf(lang.level);\n              return (\n                <div key={lang.name} className=\"flex items-center gap-3\">\n                  <span\n                    className=\"text-sm\"\n                    style={{ minWidth: 70, color: 'var(--color-paper)', fontFamily: 'var(--font-body)' }}\n                  >\n                    {lang.name}\n                  </span>\n                  <div className=\"lang-scale\">\n                    {scale.map((step, i) => (\n                      <div\n                        key={step}\n                        className={`lang-step ${i <= activeIndex ? (step === 'Native' ? 'native' : 'active') : ''}`}\n                      />\n                    ))}\n                  </div>\n                  <span\n                    className=\"text-xs font-mono\"\n                    style={{\n                      color: activeIndex === scale.length - 1 ? 'var(--color-trace)' : 'var(--color-paper)',\n                      fontFamily: 'var(--font-mono)',\n                      minWidth: 40,\n                    }}\n                  >\n                    {lang.level}\n                  </span>\n                </div>\n              );\n            })}\n          </div>\n        </div>\n      </div>\n    </section>\n  );\n}
+import { profile } from '../data/profile.ts';
+import SectionEyebrow from '../components/SectionEyebrow.tsx';
+import Button from '../components/Button.tsx';
+
+export default function Hero() {
+  const { meta, summary, stats, languages } = profile;
+
+  return (
+    <section className="waypoint-section" data-waypoint={0} aria-label="Origin — About Mohamed Aziz Jlassi">
+      <div className="section-content">
+        <SectionEyebrow waypointIndex={0} />
+
+        <h1
+          className="mb-2"
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(2.2rem, 5vw, 4rem)',
+            fontWeight: 700,
+            color: 'var(--color-paper)',
+            lineHeight: 1.1,
+          }}
+        >
+          {meta.name}
+        </h1>
+        <p
+          className="mb-1"
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
+            fontWeight: 500,
+            color: 'var(--color-signal)',
+          }}
+        >
+          {meta.role}
+        </p>
+        <p
+          className="mb-6 text-muted"
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.9rem',
+            maxWidth: 640,
+            lineHeight: 1.6,
+          }}
+        >
+          {meta.focus}
+        </p>
+
+        <p
+          className="mb-8"
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.95rem',
+            lineHeight: 1.7,
+            maxWidth: 700,
+            color: 'var(--color-paper)',
+          }}
+        >
+          {summary}
+        </p>
+
+        <div className="flex flex-wrap gap-3 mb-8">
+          {stats.map((s) => (
+            <div
+              key={s.label}
+              className="px-4 py-2 rounded-md"
+              style={{
+                background: 'var(--color-panel)',
+                border: '1px solid var(--color-line)',
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '1.1rem',
+                  fontWeight: 500,
+                  color: 'var(--color-signal)',
+                }}
+              >
+                {s.value}
+              </div>
+              <div
+                className="text-muted"
+                style={{ fontSize: '0.7rem', marginTop: 2 }}
+              >
+                {s.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap gap-3 mb-10">
+          <Button href={meta.github} target="_blank" rel="noopener noreferrer">
+            View GitHub
+          </Button>
+          <Button href={`mailto:${meta.email}`}>Send message</Button>
+        </div>
+
+        <div style={{ maxWidth: 400 }}>
+          <h3
+            className="mb-3 text-xs font-mono tracking-widest text-muted"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            LANGUAGES
+          </h3>
+          <div className="flex flex-col gap-2">
+            {languages.map((lang) => {
+              const scale = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Native'];
+              const activeIndex = scale.indexOf(lang.level);
+              return (
+                <div key={lang.name} className="flex items-center gap-3">
+                  <span
+                    className="text-sm"
+                    style={{ minWidth: 70, color: 'var(--color-paper)', fontFamily: 'var(--font-body)' }}
+                  >
+                    {lang.name}
+                  </span>
+                  <div className="lang-scale">
+                    {scale.map((step, i) => (
+                      <div
+                        key={step}
+                        className={`lang-step ${i <= activeIndex ? (step === 'Native' ? 'native' : 'active') : ''}`}
+                      />
+                    ))}
+                  </div>
+                  <span
+                    className="text-xs font-mono"
+                    style={{
+                      color: activeIndex === scale.length - 1 ? 'var(--color-trace)' : 'var(--color-paper)',
+                      fontFamily: 'var(--font-mono)',
+                      minWidth: 40,
+                    }}
+                  >
+                    {lang.level}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,1 +1,12 @@
-import { profile } from '../data/profile.ts';\n\nexport default function Footer() {\n  return (\n    <footer\n      className=\"py-6 text-center text-xs\"\n      style={{ color: 'var(--color-line)', fontFamily: 'var(--font-mono)' }}\n    >\n      &copy; {new Date().getFullYear()} {profile.meta.name}. Built from scratch, no templates.\n    </footer>\n  );\n}
+import { profile } from '../data/profile.ts';
+
+export default function Footer() {
+  return (
+    <footer
+      className="py-6 text-center text-xs"
+      style={{ color: 'var(--color-line)', fontFamily: 'var(--font-mono)' }}
+    >
+      &copy; {new Date().getFullYear()} {profile.meta.name}. Built from scratch, no templates.
+    </footer>
+  );
+}

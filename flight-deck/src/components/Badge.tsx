@@ -1,1 +1,7 @@
-interface BadgeProps {\n  children: React.ReactNode;\n}\n\nexport default function Badge({ children }: BadgeProps) {\n  return <span className=\"tech-badge\">{children}</span>;\n}
+interface BadgeProps {
+  children: React.ReactNode;
+}
+
+export default function Badge({ children }: BadgeProps) {
+  return <span className="tech-badge">{children}</span>;
+}

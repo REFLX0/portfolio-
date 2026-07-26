@@ -1,1 +1,89 @@
-import { useEffect, useCallback, useRef, useState, useMemo } from 'react';\nimport { useFlightStore } from './store/useFlightStore.ts';\nimport { useReducedMotion } from './hooks/useReducedMotion.ts';\nimport Scene from './scene/Scene.tsx';\nimport Hud from './hud/Hud.tsx';\nimport Nav from './components/Nav.tsx';\nimport Hero from './sections/Hero.tsx';\nimport Flagship from './sections/Flagship.tsx';\nimport ProjectGrid from './sections/ProjectGrid.tsx';\nimport Skills from './sections/Skills.tsx';\nimport Timeline from './sections/Timeline.tsx';\nimport Contact from './sections/Contact.tsx';\nimport { waypoints } from './data/profile.ts';\nimport type { WaypointIndex } from './data/profile.ts';\n\nexport default function App() {\n  const scrollProgress = useFlightStore((s) => s.scrollProgress);\n  const setScrollProgress = useFlightStore((s) => s.setScrollProgress);\n  const setActiveWaypoint = useFlightStore((s) => s.setActiveWaypoint);\n  const setAssetsLoaded = useFlightStore((s) => s.setAssetsLoaded);\n  const reducedMotion = useReducedMotion();\n  const setReducedMotionStore = useFlightStore((s) => s.setReducedMotion);\n  const bootComplete = useFlightStore((s) => s.bootComplete);\n  const [showHotspots, setShowHotspots] = useState(false);\n  const smootherRef = useRef<ReturnType<typeof import('gsap/ScrollSmoother').ScrollSmoother.get> | null>(null);\n  const [hotspotInfo, setHotspotInfo] = useState<{ label: string; blurb: string } | null>(null);\n\n  // Keep store in sync with hook\n  useEffect(() => {\n    setReducedMotionStore(reducedMotion);\n  }, [reducedMotion, setReducedMotionStore]);\n\n  // Mark assets loaded after mount\n  useEffect(() => {\n    // Small delay to let fonts & 3D initialize\n    const timer = setTimeout(() => setAssetsLoaded(true), 500);\n    return () => clearTimeout(timer);\n  }, [setAssetsLoaded]);\n\n  // GSAP ScrollTrigger setup — drive scroll progress and active waypoint\n  useEffect(() => {\n    if (!bootComplete) return;\n\n    let ctx: ReturnType<typeof import('gsap').gsap.context> | undefined;\n\n    const init = async () => {\n      const gsap = (await import('gsap')).gsap;\n      const { ScrollTrigger } = await import('gsap/ScrollTrigger');\n      gsap.registerPlugin(ScrollTrigger);\n\n      ctx = gsap.context(() => {\n        // Drive scrollProgress (0→1) from overall scroll\n        ScrollTrigger.create({\n          trigger: 'body',\n          start: 'top top',\n          end: 'bottom bottom',\n          onUpdate: (self) => {\n            setScrollProgress(self.progress);\n\n            // Determine active waypoint from 6 equal sections\n            const wpIndex = Math.min(\n              5,\n              Math.floor(self.progress * 6) as WaypointIndex,\n            );\n            setActiveWaypoint(wpIndex);\n\n            // Show hotspots only at WP01\n            setShowHotspots(wpIndex === 1);\n          },\n        });\n      });\n    };\n\n    init();\n\n    return () => {\n      ctx?.revert();\n    };\n  }, [bootComplete, setScrollProgress, setActiveWaypoint]);\n\n  const handleHotspotClick = useCallback((part: string, label: string, blurb: string) => {\n setHotspotInfo({ label, blurb });\n  }, []);\n\n  return (\n    <>\n      {/* 3D canvas layer — fixed behind DOM */}\n      <Scene showHotspots={showHotspots} onHotspotClick={handleHotspotClick} />\n\n      {/* HUD overlay */}\n      <Hud />\n\n      {/* Navigation pills */}\n      <Nav />\n\n      {/* Hotspot callout tooltip */}\n      {hotspotInfo && (\n        <div\n          className=\"fixed bottom-16 right-4 z-50 px-4 py-3 rounded-md max-w-xs\"\n          style={{\n            background: 'var(--color-panel)',\n            border: '1px solid var(--color-signal)',\n            fontFamily: 'var(--font-body)',\n          }}\n        >\n          <div className=\"text-sm font-medium mb-1\" style={{ color: 'var(--color-signal)' }}>{hotspotInfo.label}</div>\n          <div className=\"text-xs text-muted\" style={{ lineHeight: 1.5 }}>{hotspotInfo.blurb}</div>\n          <button\n            className=\"absolute top-2 right-2 text-xs text-muted cursor-pointer\"\n            onClick={() => setHotspotInfo(null)}\n            aria-label=\"Close\"\n            style={{ background: 'none', border: 'none', padding: 4 }}\n          >\n            &times;\n          </button>\n        </div>\n      )}\n\n      {/* Scrollable DOM sections — above the canvas */}\n      <div style={{ position: 'relative', zIndex: 1 }}>\n        <Hero />\n        <Flagship onHotspotClick={handleHotspotClick} />\n        <ProjectGrid />\n        <Skills />\n        <Timeline />\n        <Contact />\n      </div>\n    </>\n  );\n}
+import { useEffect, useCallback, useState } from 'react';
+import { useFlightStore } from './store/useFlightStore.ts';
+import { useReducedMotion } from './hooks/useReducedMotion.ts';
+import Scene from './scene/Scene.tsx';
+import Hud from './hud/Hud.tsx';
+import Nav from './components/Nav.tsx';
+import Hero from './sections/Hero.tsx';
+import Flagship from './sections/Flagship.tsx';
+import ProjectGrid from './sections/ProjectGrid.tsx';
+import Skills from './sections/Skills.tsx';
+import Timeline from './sections/Timeline.tsx';
+import Contact from './sections/Contact.tsx';
+import type { WaypointIndex } from './data/profile.ts';
+
+export default function App() {
+  const setScrollProgress = useFlightStore((s) => s.setScrollProgress);
+  const setActiveWaypoint = useFlightStore((s) => s.setActiveWaypoint);
+  const setAssetsLoaded = useFlightStore((s) => s.setAssetsLoaded);
+  const reducedMotion = useReducedMotion();
+  const setReducedMotionStore = useFlightStore((s) => s.setReducedMotion);
+  const bootComplete = useFlightStore((s) => s.bootComplete);
+  const [showHotspots, setShowHotspots] = useState(false);
+  const [hotspotInfo, setHotspotInfo] = useState<{ label: string; blurb: string } | null>(null);
+
+  useEffect(() => {
+    setReducedMotionStore(reducedMotion);
+  }, [reducedMotion, setReducedMotionStore]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAssetsLoaded(true), 500);
+    return () => clearTimeout(timer);
+  }, [setAssetsLoaded]);
+
+  useEffect(() => {
+    if (!bootComplete) return;
+    let ctx: ReturnType<typeof import('gsap').gsap.context> | undefined;
+
+    const init = async () => {
+      const gsapMod = await import('gsap');
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      const gsap = gsapMod.gsap;
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        ScrollTrigger.create({
+          trigger: 'body',
+          start: 'top top',
+          end: 'bottom bottom',
+          onUpdate: (self) => {
+            setScrollProgress(self.progress);
+            const wpIndex = Math.min(5, Math.floor(self.progress * 6)) as WaypointIndex;
+            setActiveWaypoint(wpIndex);
+            setShowHotspots(wpIndex === 1);
+          },
+        });
+      });
+    };
+
+    init();
+    return () => { ctx?.revert(); };
+  }, [bootComplete, setScrollProgress, setActiveWaypoint]);
+
+  const handleHotspotClick = useCallback((_part: string, label: string, blurb: string) => {
+    setHotspotInfo({ label, blurb });
+  }, []);
+
+  return (
+    <>
+      <Scene showHotspots={showHotspots} onHotspotClick={handleHotspotClick} />
+      <Hud />
+      <Nav />
+      {hotspotInfo && (
+        <div className="fixed bottom-16 right-4 z-50 px-4 py-3 rounded-md max-w-xs" style={{ background: 'var(--color-panel)', border: '1px solid var(--color-signal)', fontFamily: 'var(--font-body)' }}>
+          <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-signal)' }}>{hotspotInfo.label}</div>
+          <div className="text-xs text-muted" style={{ lineHeight: 1.5 }}>{hotspotInfo.blurb}</div>
+          <button className="absolute top-2 right-2 text-xs text-muted cursor-pointer" onClick={() => setHotspotInfo(null)} aria-label="Close" style={{ background: 'none', border: 'none', padding: 4 }}>&times;</button>
+        </div>
+      )}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <Hero />
+        <Flagship onHotspotClick={handleHotspotClick} />
+        <ProjectGrid />
+        <Skills />
+        <Timeline />
+        <Contact />
+      </div>
+    </>
+  );
+}

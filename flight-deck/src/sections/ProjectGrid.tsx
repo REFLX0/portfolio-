@@ -1,1 +1,22 @@
-import { profile } from '../data/profile.ts';\nimport SectionEyebrow from '../components/SectionEyebrow.tsx';\nimport ProjectCard from './ProjectCard.tsx';\n\nexport default function ProjectGrid() {\n  const { projects } = profile;\n\n  return (\n    <section className=\"waypoint-section\" data-waypoint={2} aria-label=\"Payload Bay — Other Projects\">\n      <div className=\"section-content\">\n        <SectionEyebrow waypointIndex={2} />\n\n        <h2\n          className=\"mb-8\"\n          style={{\n            fontFamily: 'var(--font-display)',\n            fontSize: 'clamp(1.4rem, 3vw, 2rem)',\n            fontWeight: 700,\n            color: 'var(--color-paper)',\n          }}\n        >\n          Other Projects\n        </h2>\n\n        <div\n          className=\"grid gap-4\"\n          style={{\n            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',\n          }}\n        >\n          {projects.map((project, i) => (\n            <ProjectCard key={project.title} project={project} index={i} />\n          ))}\n        </div>\n      </div>\n    </section>\n  );\n}
+import { profile } from '../data/profile.ts';
+import SectionEyebrow from '../components/SectionEyebrow.tsx';
+import ProjectCard from './ProjectCard.tsx';
+
+export default function ProjectGrid() {
+  const { projects } = profile;
+  return (
+    <section className="waypoint-section" data-waypoint={2} aria-label="Payload Bay — Other Projects">
+      <div className="section-content">
+        <SectionEyebrow waypointIndex={2} />
+        <h2 className="mb-8" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 700, color: 'var(--color-paper)' }}>
+          Other Projects
+        </h2>
+        <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))' }}>
+          {projects.map((project, i) => (
+            <ProjectCard key={project.title} project={project} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

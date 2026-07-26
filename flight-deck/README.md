@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# Mohamed Aziz Jlassi — Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A scroll-driven 3D portfolio for an AI & Robotics engineer, built with a flight-deck metaphor drawn from his own autonomous drone project.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Framework:** Vite + React 19 + TypeScript
+- **3D:** Three.js + React Three Fiber + Drei
+- **Animation:** GSAP (ScrollTrigger)
+- **State:** Zustand
+- **Styling:** Tailwind CSS v4 (CSS-first config)
+- **Fonts:** Bricolage Grotesque, IBM Plex Sans, IBM Plex Mono (self-hosted via @fontsource)
+- **Icons:** Lucide React
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
+npm run build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Features
+
+- Procedurally-built 3D quadcopter (no external models) that flies a path through the page as you scroll
+- Live HUD telemetry overlay (altitude, speed, heading, battery, GPS coordinates, waypoint code)
+- Boot sequence animation on load
+- Six content waypoints (sections): Origin, Primary Mission, Payload Bay, Systems Check, Flight Log, Rendezvous
+- Interactive drone subsystem hotspots at the flagship project waypoint
+- Responsive design from 360px to ultrawide
+- `prefers-reduced-motion` fully respected
+- Keyboard accessible with visible focus states
+- Semantic HTML with screen-reader alternatives for the 3D scene
+
+## License
+
+MIT

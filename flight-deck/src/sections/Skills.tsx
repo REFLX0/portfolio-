@@ -1,1 +1,30 @@
-import { profile } from '../data/profile.ts';\nimport SectionEyebrow from '../components/SectionEyebrow.tsx';\n\nexport default function Skills() {\n  const { skills } = profile;\n\n  return (\n    <section className=\"waypoint-section\" data-waypoint={3} aria-label=\"Systems Check — Technical Skills\">\n      <div className=\"section-content\">\n        <SectionEyebrow waypointIndex={3} />\n\n        <h2\n          className=\"mb-8\"\n          style={{\n            fontFamily: 'var(--font-display)',\n            fontSize: 'clamp(1.4rem, 3vw, 2rem)',\n            fontWeight: 700,\n            color: 'var(--color-paper)',\n          }}\n        >\n          Technical Skills\n        </h2>\n\n        <div\n          className=\"grid gap-4\"\n          style={{\n            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))',\n          }}\n        >\n          {skills.map((group) => (\n            <div key={group.category} className=\"skill-category\">\n              <h3\n                className=\"mb-3 text-sm font-medium\"\n                style={{\n                  fontFamily: 'var(--font-display)',\n                  color: 'var(--color-paper)',\n                  fontWeight: 600,\n                }}\n              >\n                {group.category}\n              </h3>\n              <div className=\"flex flex-wrap gap-1.5\">\n                {group.items.map((item) => (\n                  <span\n                    key={item}\n                    className=\"tech-badge\"\n                  >\n                    {item}\n                  </span>\n                ))}\n              </div>\n            </div>\n          ))}\n        </div>\n      </div>\n    </section>\n  );\n}
+import { profile } from '../data/profile.ts';
+import SectionEyebrow from '../components/SectionEyebrow.tsx';
+
+export default function Skills() {
+  const { skills } = profile;
+  return (
+    <section className="waypoint-section" data-waypoint={3} aria-label="Systems Check — Technical Skills">
+      <div className="section-content">
+        <SectionEyebrow waypointIndex={3} />
+        <h2 className="mb-8" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 700, color: 'var(--color-paper)' }}>
+          Technical Skills
+        </h2>
+        <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))' }}>
+          {skills.map((group) => (
+            <div key={group.category} className="skill-category">
+              <h3 className="mb-3 text-sm font-medium" style={{ fontFamily: 'var(--font-display)', color: 'var(--color-paper)', fontWeight: 600 }}>
+                {group.category}
+              </h3>
+              <div className="flex flex-wrap gap-1.5">
+                {group.items.map((item) => (
+                  <span key={item} className="tech-badge">{item}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

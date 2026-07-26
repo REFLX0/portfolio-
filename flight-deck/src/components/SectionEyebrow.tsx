@@ -1,1 +1,27 @@
-import { useFlightStore } from '../store/useFlightStore.ts';\nimport { waypoints } from '../data/profile.ts';\nimport type { WaypointIndex } from '../data/profile.ts';\n\ninterface SectionEyebrowProps {\n waypointIndex: WaypointIndex;\n label?: string;\n}\n\nexport default function SectionEyebrow({ waypointIndex, label }: SectionEyebrowProps) {\n  const activeWaypoint = useFlightStore((s) => s.activeWaypoint);\n  const wp = waypoints[waypointIndex];\n  const isActive = activeWaypoint === waypointIndex;\n\n  return (\n    <div\n      className=\"font-mono text-xs tracking-widest mb-4 transition-opacity duration-200\"\n      style={{\n        fontFamily: 'var(--font-mono)',\n        color: isActive ? 'var(--color-signal)' : 'var(--color-line)',\n        opacity: isActive ? 1 : 0.6,\n      }}\n      aria-hidden=\"true\"\n    >\n      {wp.code} // {label ?? wp.label}\n    </div>\n  );\n}
+import { useFlightStore } from '../store/useFlightStore.ts';
+import { waypoints } from '../data/profile.ts';
+import type { WaypointIndex } from '../data/profile.ts';
+
+interface SectionEyebrowProps {
+  waypointIndex: WaypointIndex;
+  label?: string;
+}
+
+export default function SectionEyebrow({ waypointIndex, label }: SectionEyebrowProps) {
+  const activeWaypoint = useFlightStore((s) => s.activeWaypoint);
+  const wp = waypoints[waypointIndex];
+  const isActive = activeWaypoint === waypointIndex;
+  return (
+    <div
+      className="font-mono text-xs tracking-widest mb-4 transition-opacity duration-200"
+      style={{
+        fontFamily: 'var(--font-mono)',
+        color: isActive ? 'var(--color-signal)' : 'var(--color-line)',
+        opacity: isActive ? 1 : 0.6,
+      }}
+      aria-hidden="true"
+    >
+      {wp.code} // {label ?? wp.label}
+    </div>
+  );
+}

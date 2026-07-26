@@ -1,1 +1,52 @@
-import { profile } from '../data/profile.ts';\nimport SectionEyebrow from '../components/SectionEyebrow.tsx';\nimport Badge from '../components/Badge.tsx';\n\nexport default function Timeline() {\n  const { education, internship, attributes } = profile;\n\n  const timelineEntries = [\n    {\n      title: education.degree,\n      org: education.school,\n      detail: education.honor,\n      stack: [] as string[],\n    },\n    {\n      title: internship.title,\n      org: internship.org,\n      detail: internship.label,\n      stack: internship.stack,\n    },\n  ];\n\n  return (\n    <section className=\"waypoint-section\" data-waypoint={4} aria-label=\"Flight Log — Education and Internship\">\n      <div className=\"section-content\">\n        <SectionEyebrow waypointIndex={4} />\n\n        <h2\n          className=\"mb-8\"\n          style={{\n            fontFamily: 'var(--font-display)',\n            fontSize: 'clamp(1.4rem, 3vw, 2rem)',\n            fontWeight: 700,\n            color: 'var(--color-paper)',\n          }}\n        >\n          Flight Log\n        </h2>\n\n        <div className=\"grid gap-8\" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))' }}>\n          {/* Timeline column */}\n          <div>\n            <div className=\"relative pl-6\" style={{ borderLeft: '1px solid var(--color-line)' }}>\n              {timelineEntries.map((entry, i) => (\n                <div key={i} className=\"relative mb-8 last:mb-0\">\n                  {/* Dot on the timeline */}\n                  <div\n                    className=\"absolute -left-[25px] top-1\"\n                    style={{\n                      width: 8, height: 8, borderRadius: '50%',\n                      background: 'var(--color-signal)',\n                      boxShadow: '0 0 8px var(--color-signal)',\n                    }}\n                  />\n                  <h3\n                    className=\"mb-1\"\n                    style={{\n                      fontFamily: 'var(--font-display)',\n                      fontSize: '1.05rem',\n                      fontWeight: 600,\n                      color: 'var(--color-paper)',\n                    }}\n                  >\n                    {entry.title}\n                  </h3>\n                  <p className=\"text-sm text-muted mb-1\" style={{ fontFamily: 'var(--font-body)' }}>\n                    {entry.org}\n                  </p>\n                  <p\n                    className=\"text-xs font-mono mb-2\"\n                    style={{ color: 'var(--color-signal)', fontFamily: 'var(--font-mono)' }}\n                  >\n                    {entry.detail}\n                  </p>\n                  {entry.stack.length > 0 && (\n                    <div className=\"flex flex-wrap gap-1.5\">\n                      {entry.stack.map((tech) => (\n                        <Badge key={tech}>{tech}</Badge>\n                      ))}\n                    </div>\n                  )}\n                </div>\n              ))}\n            </div>\n          </div>\n\n          {/* Attributes column */}\n          <div>\n            <h3\n              className=\"mb-4 text-xs font-mono tracking-widest text-muted\"\n              style={{ fontFamily: 'var(--font-mono)' }}\n            >\n              KEY ATTRIBUTES\n            </h3>\n            <ul className=\"flex flex-col gap-2\" style={{ listStyle: 'none', padding: 0, margin: 0 }}>\n              {attributes.map((attr) => (\n                <li\n                  key={attr}\n                  className=\"flex items-center gap-2 text-sm\"\n                  style={{ color: 'var(--color-paper)', fontFamily: 'var(--font-body)' }}\n                >\n                  <span\n                    style={{\n                      width: 4, height: 4, borderRadius: '50%',\n                      background: 'var(--color-trace)',\n                      flexShrink: 0,\n                    }}\n                  />\n                  {attr}\n                </li>\n              ))}\n            </ul>\n          </div>\n        </div>\n      </div>\n    </section>\n  );\n}
+import { profile } from '../data/profile.ts';
+import SectionEyebrow from '../components/SectionEyebrow.tsx';
+import Badge from '../components/Badge.tsx';
+
+export default function Timeline() {
+  const { education, internship, attributes } = profile;
+  const timelineEntries = [
+    { title: education.degree, org: education.school, detail: education.honor, stack: [] as string[] },
+    { title: internship.title, org: internship.org, detail: internship.label, stack: internship.stack },
+  ];
+
+  return (
+    <section className="waypoint-section" data-waypoint={4} aria-label="Flight Log — Education and Internship">
+      <div className="section-content">
+        <SectionEyebrow waypointIndex={4} />
+        <h2 className="mb-8" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 700, color: 'var(--color-paper)' }}>
+          Flight Log
+        </h2>
+        <div className="grid gap-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))' }}>
+          <div>
+            <div className="relative pl-6" style={{ borderLeft: '1px solid var(--color-line)' }}>
+              {timelineEntries.map((entry, i) => (
+                <div key={i} className="relative mb-8 last:mb-0">
+                  <div className="absolute -left-[25px] top-1" style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--color-signal)', boxShadow: '0 0 8px var(--color-signal)' }} />
+                  <h3 className="mb-1" style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-paper)' }}>{entry.title}</h3>
+                  <p className="text-sm text-muted mb-1" style={{ fontFamily: 'var(--font-body)' }}>{entry.org}</p>
+                  <p className="text-xs font-mono mb-2" style={{ color: 'var(--color-signal)', fontFamily: 'var(--font-mono)' }}>{entry.detail}</p>
+                  {entry.stack.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {entry.stack.map((tech) => (<Badge key={tech}>{tech}</Badge>))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xs font-mono tracking-widest text-muted" style={{ fontFamily: 'var(--font-mono)' }}>KEY ATTRIBUTES</h3>
+            <ul className="flex flex-col gap-2" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {attributes.map((attr) => (
+                <li key={attr} className="flex items-center gap-2 text-sm" style={{ color: 'var(--color-paper)', fontFamily: 'var(--font-body)' }}>
+                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--color-trace)', flexShrink: 0 }} />
+                  {attr}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

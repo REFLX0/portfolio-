@@ -1,1 +1,55 @@
-import { profile } from '../data/profile.ts';\nimport SectionEyebrow from '../components/SectionEyebrow.tsx';\nimport Button from '../components/Button.tsx';\nimport Footer from '../components/Footer.tsx';\nimport { Mail, Phone, MapPin, Github, Linkedin } from 'lucide-react';\n\nexport default function Contact() {\n  const { meta, summary } = profile;\n\n  const contacts = [\n    { icon: Mail, label: 'Email', value: meta.email, href: `mailto:${meta.email}` },\n    { icon: Phone, label: 'Phone', value: meta.phone, href: `tel:${meta.phone.replace(/\\s/g, '')}` },\n    { icon: MapPin, label: 'Location', value: meta.location, href: undefined },\n    { icon: Github, label: 'GitHub', value: 'REFLX0', href: meta.github },\n    { icon: Linkedin, label: 'LinkedIn', value: 'aziz-jlassi111', href: meta.linkedin },\n  ];\n\n  return (\n    <section className=\"waypoint-section\" data-waypoint={5} aria-label=\"Rendezvous — Contact\">\n      <div className=\"section-content\" style={{ maxWidth: 700, textAlign: 'center' }}>\n        <SectionEyebrow waypointIndex={5} />\n\n        <h2\n          className=\"mb-4\"\n          style={{\n            fontFamily: 'var(--font-display)',\n            fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',\n            fontWeight: 700,\n            color: 'var(--color-paper)',\n          }}\n        >\n          Get in Touch\n        </h2>\n\n        <p\n          className=\"mb-8 text-muted mx-auto\"\n          style={{ fontSize: '0.95rem', lineHeight: 1.7, maxWidth: 540 }}\n        >\n          {summary}\n        </p>\n\n        <div className=\"flex flex-col items-center gap-3 mb-8\">\n          {contacts.map((c) => {\n            const Icon = c.icon;\n            const content = (\n              <div\n                className=\"flex items-center gap-3 px-4 py-3 rounded-md transition-colors duration-200\"\n                style={{\n                  background: 'var(--color-panel)',\n                  border: '1px solid var(--color-line)',\n                  width: 300,\n                  textAlign: 'left',\n                }}\n              >\n                <Icon size={16} style={{ color: 'var(--color-trace)', flexShrink: 0 }} />\n                <div>\n                  <div className=\"text-xs text-muted\" style={{ fontFamily: 'var(--font-mono)' }}>{c.label}</div>\n                  <div className=\"text-sm\" style={{ color: 'var(--color-paper)', wordBreak: 'break-all' }}>{c.value}</div>\n                </div>\n              </div>\n            );\n\n            if (c.href) {\n              return (\n                <a\n                  key={c.label}\n                  href={c.href}\n                  target={c.href.startsWith('http') ? '_blank' : undefined}\n                  rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}\n                  style={{ textDecoration: 'none' }}\n                  onMouseEnter={(e) => {\n                    (e.currentTarget as HTMLElement).querySelector('div')!.setAttribute('style',\n                      (e.currentTarget as HTMLElement).querySelector('div')!.getAttribute('style')!.replace('var(--color-line)', 'var(--color-signal)')\n                    );\n                  }}\n                >\n                  {content}\n                </a>\n              );\n            }\n            return <div key={c.label}>{content}</div>;\n          })}\n        </div>\n\n        <div className=\"flex justify-center gap-3 mb-12\">\n          <Button href={`mailto:${meta.email}`}>Send message</Button>\n          <Button href={meta.github} target=\"_blank\" rel=\"noopener noreferrer\">\n            View GitHub\n          </Button>\n        </div>\n\n        <Footer />\n      </div>\n    </section>\n  );\n}
+import { profile } from '../data/profile.ts';
+import SectionEyebrow from '../components/SectionEyebrow.tsx';
+import Button from '../components/Button.tsx';
+import Footer from '../components/Footer.tsx';
+import { Mail, Phone, MapPin, Globe, Link2 } from 'lucide-react';
+
+export default function Contact() {
+  const { meta, summary } = profile;
+  const contacts = [
+    { icon: Mail, label: 'Email', value: meta.email, href: `mailto:${meta.email}` },
+    { icon: Phone, label: 'Phone', value: meta.phone, href: `tel:${meta.phone.replace(/\s/g, '')}` },
+    { icon: MapPin, label: 'Location', value: meta.location, href: undefined },
+    { icon: Globe, label: 'GitHub', value: 'REFLX0', href: meta.github },
+    { icon: Link2, label: 'LinkedIn', value: 'aziz-jlassi111', href: meta.linkedin },
+  ];
+
+  return (
+    <section className="waypoint-section" data-waypoint={5} aria-label="Rendezvous — Contact">
+      <div className="section-content" style={{ maxWidth: 700, textAlign: 'center' }}>
+        <SectionEyebrow waypointIndex={5} />
+        <h2 className="mb-4" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', fontWeight: 700, color: 'var(--color-paper)' }}>
+          Get in Touch
+        </h2>
+        <p className="mb-8 text-muted mx-auto" style={{ fontSize: '0.95rem', lineHeight: 1.7, maxWidth: 540 }}>{summary}</p>
+        <div className="flex flex-col items-center gap-3 mb-8">
+          {contacts.map((c) => {
+            const Icon = c.icon;
+            const content = (
+              <div className="flex items-center gap-3 px-4 py-3 rounded-md transition-colors duration-200" style={{ background: 'var(--color-panel)', border: '1px solid var(--color-line)', width: 300, textAlign: 'left' }}>
+                <Icon size={16} style={{ color: 'var(--color-trace)', flexShrink: 0 }} />
+                <div>
+                  <div className="text-xs text-muted" style={{ fontFamily: 'var(--font-mono)' }}>{c.label}</div>
+                  <div className="text-sm" style={{ color: 'var(--color-paper)', wordBreak: 'break-all' }}>{c.value}</div>
+                </div>
+              </div>
+            );
+            if (c.href) {
+              return (
+                <a key={c.label} href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined} style={{ textDecoration: 'none' }}>
+                  {content}
+                </a>
+              );
+            }
+            return <div key={c.label}>{content}</div>;
+          })}
+        </div>
+        <div className="flex justify-center gap-3 mb-12">
+          <Button href={`mailto:${meta.email}`}>Send message</Button>
+          <Button href={meta.github} target="_blank" rel="noopener noreferrer">View GitHub</Button>
+        </div>
+        <Footer />
+      </div>
+    </section>
+  );
+}

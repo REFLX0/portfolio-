@@ -235,8 +235,8 @@ export default function Drone({ showHotspots = false, onHotspotClick }: DronePro
           <meshStandardMaterial color="#2a2d32" roughness={0.3} metalness={0.7} />
         </mesh>
         {/* Lens — rotated cylinder for the camera lens nodule */}
-        <mesh position={[0, 0, 0.07]}>
-          <cylinderGeometry args={[0.03, 0.03, 0.04, 12]} rotation={[Math.PI / 2, 0, 0]} />
+        <mesh position={[0, 0, 0.07]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.03, 0.03, 0.04, 12]} />
           <meshStandardMaterial color="#111" roughness={0.2} metalness={0.8} />
         </mesh>
       </group>
