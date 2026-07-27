@@ -68,7 +68,7 @@ export default function Timeline() {
             <p style={{
               fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
               letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: 'var(--color-text-tertiary)', marginBottom: '0.75rem',
+              color: 'var(--color-text-muted)', marginBottom: '0.75rem',
             }}>
               Key Attributes
             </p>

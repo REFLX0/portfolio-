@@ -20,7 +20,7 @@ export default function Contact() {
         <div className="section-wrap" style={{ maxWidth: 680, textAlign: 'center' }}>
           <SectionEyebrow waypointIndex={5} />
           <h2 className="section-title" style={{ marginBottom: '0.75rem' }}>
-            Let's Build Something Together
+            Get in Touch
           </h2>
           <p className="section-subtitle" style={{ margin: '0 auto 2.5rem' }}>
             Whether it's autonomous systems, AI pipelines, or full-stack engineering —
@@ -29,23 +29,23 @@ export default function Contact() {
 
           <div style={{
             display: 'flex', flexDirection: 'column',
-            alignItems: 'center', gap: '0.6rem', marginBottom: '2rem',
+            alignItems: 'center', gap: '0.5rem', marginBottom: '2rem',
           }}>
             {contacts.map((c) => {
               const Icon = c.icon;
               const inner = (
                 <div className="contact-card">
                   <div className="contact-icon">
-                    <Icon size={18} style={{ color: 'var(--color-accent)' }} />
+                    <Icon size={16} style={{ color: 'var(--color-text-secondary)' }} />
                   </div>
                   <div style={{ textAlign: 'left' }}>
                     <div className="contact-label">{c.label}</div>
                     <div className="contact-value">{c.value}</div>
                   </div>
                   {c.href && (
-                    <ArrowUpRight size={14} style={{
-                      color: 'var(--color-text-tertiary)',
-                      marginLeft: 'auto', opacity: 0.5,
+                    <ArrowUpRight size={13} style={{
+                      color: 'var(--color-text-muted)',
+                      marginLeft: 'auto', opacity: 0.4,
                     }} />
                   )}
                 </div>
@@ -66,10 +66,10 @@ export default function Contact() {
 
           <div className="cta-group" style={{ justifyContent: 'center' }}>
             <a href={`mailto:${meta.email}`} className="btn-primary">
-              <Mail size={16} /> Send a Message
+              <Mail size={15} /> Send a Message
             </a>
             <a href={meta.github} target="_blank" rel="noopener noreferrer" className="btn-outline">
-              <Link2 size={16} /> GitHub Profile
+              <Link2 size={15} /> GitHub
             </a>
           </div>
         </div>

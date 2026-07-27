@@ -34,11 +34,11 @@ export default function CanvasBackground() {
     const w = () => window.innerWidth;
     const h = () => window.innerHeight;
 
+    // Subtle neutral blobs for dark theme
     const blobs: Blob[] = [
-      { x: 0.2, y: 0.3, vx: 0.0003, vy: 0.0002, radius: 250, color: '#e85d3a', opacity: 0.08, phase: 0, speed: 0.0008 },
-      { x: 0.7, y: 0.6, vx: -0.0002, vy: 0.0003, radius: 300, color: '#7c3aed', opacity: 0.06, phase: 2, speed: 0.0006 },
-      { x: 0.5, y: 0.8, vx: 0.0001, vy: -0.0002, radius: 200, color: '#3b82f6', opacity: 0.07, phase: 4, speed: 0.001 },
-      { x: 0.8, y: 0.2, vx: -0.0003, vy: -0.0001, radius: 180, color: '#10b981', opacity: 0.05, phase: 1, speed: 0.0007 },
+      { x: 0.15, y: 0.25, vx: 0.0002, vy: 0.0001, radius: 350, color: '#ffffff', opacity: 0.03, phase: 0, speed: 0.0005 },
+      { x: 0.75, y: 0.55, vx: -0.0001, vy: 0.0002, radius: 400, color: '#ffffff', opacity: 0.025, phase: 2, speed: 0.0004 },
+      { x: 0.5, y: 0.8, vx: 0.0001, vy: -0.0001, radius: 300, color: '#ffffff', opacity: 0.02, phase: 4, speed: 0.0006 },
     ];
 
     let time = 0;
@@ -51,16 +51,16 @@ export default function CanvasBackground() {
       if (!reducedMotion) time += 1;
 
       for (const b of blobs) {
-        const ox = reducedMotion ? 0 : Math.sin(time * b.speed + b.phase) * 80;
-        const oy = reducedMotion ? 0 : Math.cos(time * b.speed * 0.7 + b.phase) * 60;
+        const ox = reducedMotion ? 0 : Math.sin(time * b.speed + b.phase) * 100;
+        const oy = reducedMotion ? 0 : Math.cos(time * b.speed * 0.7 + b.phase) * 80;
         const cx = b.x * W + ox;
         const cy = b.y * H + oy;
         const r = b.radius;
 
         const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        grad.addColorStop(0, b.color + '20');
-        grad.addColorStop(0.5, b.color + '08');
-        grad.addColorStop(1, b.color + '00');
+        grad.addColorStop(0, 'rgba(255,255,255,0.04)');
+        grad.addColorStop(0.5, 'rgba(255,255,255,0.015)');
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
 
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);

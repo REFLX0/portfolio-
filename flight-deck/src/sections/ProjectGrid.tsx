@@ -8,9 +8,9 @@ export default function ProjectGrid() {
     <section data-waypoint={2} aria-label="Other Projects">
       <div className="section-wrap">
         <SectionEyebrow waypointIndex={2} />
-        <h2 className="section-title">Other Projects</h2>
-        <p className="section-subtitle" style={{ marginBottom: '2rem' }}>
-          A selection of engineering work spanning AI, IoT, full-stack, DevOps, and computer vision.
+        <h2 className="section-title">Featured Work</h2>
+        <p className="section-subtitle" style={{ marginBottom: '2.5rem' }}>
+          Production-grade solutions spanning AI, IoT, full-stack, DevOps, and computer vision.
         </p>
         <div className="bento-grid">
           {projects.map((project) => (
