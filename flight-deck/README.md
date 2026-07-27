@@ -1,15 +1,15 @@
 # Mohamed Aziz Jlassi — Portfolio
 
-A scroll-driven 3D portfolio for an AI & Robotics engineer, built with a flight-deck metaphor drawn from his own autonomous drone project.
+A dark-themed, scroll-driven portfolio for an AI & Robotics engineer. Minimal, fast, readable — no heavy 3D, no templates.
 
 ## Tech Stack
 
 - **Framework:** Vite + React 19 + TypeScript
-- **3D:** Three.js + React Three Fiber + Drei
 - **Animation:** GSAP (ScrollTrigger)
 - **State:** Zustand
 - **Styling:** Tailwind CSS v4 (CSS-first config)
-- **Fonts:** Bricolage Grotesque, IBM Plex Sans, IBM Plex Mono (self-hosted via @fontsource)
+- **Background:** 2D Canvas particle network (zero WebGL)
+- **Fonts:** Bricolage Grotesque, IBM Plex Sans, IBM Plex Mono (self-hosted)
 - **Icons:** Lucide React
 
 ## Getting Started
@@ -22,15 +22,15 @@ npm run build
 
 ## Features
 
-- Procedurally-built 3D quadcopter (no external models) that flies a path through the page as you scroll
-- Live HUD telemetry overlay (altitude, speed, heading, battery, GPS coordinates, waypoint code)
-- Boot sequence animation on load
-- Six content waypoints (sections): Origin, Primary Mission, Payload Bay, Systems Check, Flight Log, Rendezvous
-- Interactive drone subsystem hotspots at the flagship project waypoint
-- Responsive design from 360px to ultrawide
+- Animated circuit-board SVG in the hero (robotics/automation theme)
+- 2D Canvas particle network background
+- GSAP ScrollTrigger-driven section reveals
+- Six content sections: Hero, Flagship Project, Projects, Skills, Experience, Contact
+- Interactive drone subsystem hotspots
+- Responsive from 360px to ultrawide
+- Mobile nav with dot indicators, desktop with labels
 - `prefers-reduced-motion` fully respected
 - Keyboard accessible with visible focus states
-- Semantic HTML with screen-reader alternatives for the 3D scene
 
 ## License
 

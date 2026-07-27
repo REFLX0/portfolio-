@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect } from 'react';
 import { useFlightStore } from './store/useFlightStore';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import CanvasBackground from './components/CanvasBackground';
@@ -10,7 +10,6 @@ import ProjectGrid from './sections/ProjectGrid';
 import Skills from './sections/Skills';
 import Timeline from './sections/Timeline';
 import Contact from './sections/Contact';
-import Footer from './components/Footer';
 import type { WaypointIndex } from './data/profile';
 
 export default function App() {
@@ -20,13 +19,11 @@ export default function App() {
   const setBootComplete = useFlightStore((s) => s.setBootComplete);
   const reducedMotion = useReducedMotion();
   const setReducedMotionStore = useFlightStore((s) => s.setReducedMotion);
-  const [hotspotInfo, setHotspotInfo] = useState<{ label: string; blurb: string } | null>(null);
 
   useEffect(() => {
     setReducedMotionStore(reducedMotion);
   }, [reducedMotion, setReducedMotionStore]);
 
-  // Skip boot sequence for instant load
   useEffect(() => {
     setAssetsLoaded(true);
     setBootComplete(true);
@@ -59,54 +56,29 @@ export default function App() {
     return () => { ctx?.revert(); };
   }, [setScrollProgress, setActiveWaypoint]);
 
-  const handleHotspotClick = useCallback((_part: string, label: string, blurb: string) => {
-    setHotspotInfo({ label, blurb });
-  }, []);
-
   return (
     <>
       <CanvasBackground />
       <Nav />
-      {hotspotInfo && (
-        <div
-          className="fixed bottom-6 right-4 z-50 px-4 py-3 rounded-lg max-w-xs"
-          style={{
-            background: 'color-mix(in srgb, var(--color-panel) 95%, transparent)',
-            border: '1px solid var(--color-signal)',
-            backdropFilter: 'blur(12px)',
-            fontFamily: 'var(--font-body)',
-          }}
-        >
-          <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-signal)' }}>
-            {hotspotInfo.label}
-          </div>
-          <div className="text-xs text-muted" style={{ lineHeight: 1.5 }}>
-            {hotspotInfo.blurb}
-          </div>
-          <button
-            className="absolute top-2 right-2 text-xs text-muted cursor-pointer"
-            onClick={() => setHotspotInfo(null)}
-            aria-label="Close"
-            style={{ background: 'none', border: 'none', padding: 4 }}
-          >
-            ×
-          </button>
-        </div>
-      )}
       <main style={{ position: 'relative', zIndex: 1 }}>
         <Hero />
+        <div className="section-divider"><hr /></div>
         <ScrollReveal>
-          <Flagship onHotspotClick={handleHotspotClick} />
+          <Flagship />
         </ScrollReveal>
+        <div className="section-divider"><hr /></div>
         <ScrollReveal>
           <ProjectGrid />
         </ScrollReveal>
+        <div className="section-divider"><hr /></div>
         <ScrollReveal>
           <Skills />
         </ScrollReveal>
+        <div className="section-divider"><hr /></div>
         <ScrollReveal>
           <Timeline />
         </ScrollReveal>
+        <div className="section-divider"><hr /></div>
         <ScrollReveal>
           <Contact />
         </ScrollReveal>
