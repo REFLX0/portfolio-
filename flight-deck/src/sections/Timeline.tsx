@@ -7,18 +7,18 @@ export default function Timeline() {
 
   const entries = [
     {
-      title: experience.title,
-      org: experience.org,
-      detail: experience.label,
-      points: experience.points,
-      stack: experience.stack,
-    },
-    {
       title: internship.title,
       org: internship.org,
       detail: internship.label,
       points: internship.points,
       stack: internship.stack,
+    },
+    {
+      title: experience.title,
+      org: experience.org,
+      detail: experience.label,
+      points: experience.points,
+      stack: experience.stack,
     },
     {
       title: education.degree,
