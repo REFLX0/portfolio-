@@ -1,6 +1,6 @@
 import { profile } from '../data/profile';
 import ScrollReveal from '../components/ScrollReveal';
-import { ArrowDown, Github, Mail } from 'lucide-react';
+import { ArrowDown, Link2, Mail } from 'lucide-react';
 
 const langLevels: Record<string, number> = {
   'Native': 100,
@@ -104,7 +104,7 @@ export default function Hero() {
         <ScrollReveal delay={0.4}>
           <div className="cta-group">
             <a href={meta.github} target="_blank" rel="noopener noreferrer" className="btn-primary">
-              <Github size={16} />
+              <Link2 size={16} />
               View GitHub
             </a>
             <a href={`mailto:${meta.email}`} className="btn-outline">

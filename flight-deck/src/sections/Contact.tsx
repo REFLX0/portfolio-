@@ -1,7 +1,7 @@
 import { profile } from '../data/profile';
 import SectionEyebrow from '../components/SectionEyebrow';
 import Footer from '../components/Footer';
-import { Mail, Phone, MapPin, Github, Linkedin, ArrowUpRight } from 'lucide-react';
+import { Mail, Phone, MapPin, Link2, Link, ArrowUpRight } from 'lucide-react';
 
 export default function Contact() {
   const { meta } = profile;
@@ -10,8 +10,8 @@ export default function Contact() {
     { icon: Mail, label: 'Email', value: meta.email, href: `mailto:${meta.email}` },
     { icon: Phone, label: 'Phone', value: meta.phone, href: `tel:${meta.phone.replace(/\s/g, '')}` },
     { icon: MapPin, label: 'Location', value: meta.location, href: undefined },
-    { icon: Github, label: 'GitHub', value: 'REFLX0', href: meta.github },
-    { icon: Linkedin, label: 'LinkedIn', value: 'aziz-jlassi111', href: meta.linkedin },
+    { icon: Link2, label: 'GitHub', value: 'REFLX0', href: meta.github },
+    { icon: Link, label: 'LinkedIn', value: 'aziz-jlassi111', href: meta.linkedin },
   ];
 
   return (
@@ -82,7 +82,7 @@ export default function Contact() {
               Send a Message
             </a>
             <a href={meta.github} target="_blank" rel="noopener noreferrer" className="btn-outline">
-              <Github size={16} />
+              <Link2 size={16} />
               GitHub Profile
             </a>
           </div>
