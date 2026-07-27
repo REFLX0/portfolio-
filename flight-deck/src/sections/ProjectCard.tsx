@@ -1,4 +1,4 @@
-import Badge from '../components/Badge.tsx';
+import Badge from '../components/Badge';
 
 interface Project {
   title: string;
@@ -9,29 +9,32 @@ interface Project {
 
 interface ProjectCardProps {
   project: Project;
-  index: number;
 }
 
-export default function ProjectCard({ project, index }: ProjectCardProps) {
+export default function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <article className="project-card" style={{ animationDelay: `${index * 50}ms` }}>
-      <div className="mb-2 text-xs font-mono tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-trace)', fontSize: '0.65rem' }}>
-        {project.category}
-      </div>
-      <h3 className="mb-3" style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-paper)', lineHeight: 1.3 }}>
-        {project.title}
-      </h3>
-      <ul className="mb-4 flex flex-col gap-2" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {project.points.map((point, i) => (
-          <li key={i} className="text-sm text-muted" style={{ lineHeight: 1.55, paddingLeft: 10, borderLeft: '2px solid var(--color-line)' }}>
-            {point}
-          </li>
+    <article className="project-card">
+      <div className="project-card-category">{project.category}</div>
+      <h3 className="project-card-title">{project.title}</h3>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+        {project.points.slice(0, 2).map((point, i) => (
+          <div className="project-card-point" key={i}>{point}</div>
         ))}
-      </ul>
-      <div className="flex flex-wrap gap-1.5">
-        {project.stack.map((tech) => (
+      </div>
+      <div className="project-card-stack">
+        {project.stack.slice(0, 5).map((tech) => (
           <Badge key={tech}>{tech}</Badge>
         ))}
+        {project.stack.length > 5 && (
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.65rem',
+            color: 'var(--color-paper)',
+            padding: '0.2rem 0.5rem',
+          }}>
+            +{project.stack.length - 5}
+          </span>
+        )}
       </div>
     </article>
   );

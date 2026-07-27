@@ -1,81 +1,57 @@
 import { useState } from 'react';
-import { profile } from '../data/profile.ts';
-import SectionEyebrow from '../components/SectionEyebrow.tsx';
-import Badge from '../components/Badge.tsx';
+import { profile } from '../data/profile';
+import SectionEyebrow from '../components/SectionEyebrow';
+import Badge from '../components/Badge';
 
-interface FlagshipProps {
-  onHotspotClick?: (part: string, label: string, blurb: string) => void;
-}
-
-export default function Flagship({ onHotspotClick }: FlagshipProps) {
+export default function Flagship() {
   const { flagship } = profile;
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
 
-  const handleHotspotClick = (part: string, label: string, blurb: string) => {
-    setActiveHotspot(activeHotspot === part ? null : part);
-    onHotspotClick?.(part, label, blurb);
-  };
-
   return (
-    <section className="waypoint-section" data-waypoint={1} aria-label="Primary Mission — Autonomous Drone Project">
-      <div className="section-content">
+    <section data-waypoint={1} aria-label="Primary Mission — Autonomous Drone Project">
+      <div className="section-wrap">
         <SectionEyebrow waypointIndex={1} />
-        <h2
-          className="mb-1"
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
-            fontWeight: 700,
-            color: 'var(--color-paper)',
-          }}
-        >
-          {flagship.title}
-        </h2>
-        <p className="mb-6 text-muted text-sm">{flagship.subtitle}</p>
-        <div className="grid gap-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))' }}>
+        <h2 className="section-title">{flagship.title}</h2>
+        <p className="section-subtitle" style={{ marginBottom: '2.5rem' }}>
+          {flagship.subtitle}
+        </p>
+
+        <div className="flagship-grid">
           <div>
-            <ul className="mb-6 flex flex-col gap-3" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <div className="timeline-points" style={{ marginBottom: '1.5rem' }}>
               {flagship.points.map((point, i) => (
-                <li key={i} className="flex gap-3 text-sm" style={{ lineHeight: 1.6, color: 'var(--color-paper)' }}>
-                  <span
-                    className="mt-1 shrink-0"
-                    style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--color-signal)' }}
-                  />
-                  {point}
-                </li>
+                <div className="timeline-point" key={i}>{point}</div>
               ))}
-            </ul>
-            <div className="flex flex-wrap gap-2">
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
               {flagship.stack.map((tech) => (
                 <Badge key={tech}>{tech}</Badge>
               ))}
             </div>
           </div>
+
           <div>
-            <h3 className="mb-3 text-xs font-mono tracking-widest text-muted" style={{ fontFamily: 'var(--font-mono)' }}>
-              SUBSYSTEM OVERVIEW — click to inspect
-            </h3>
-            <div className="flex flex-col gap-2">
+            <p style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.65rem',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: 'var(--color-paper)',
+              marginBottom: '0.75rem',
+            }}>
+              Subsystem Overview
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {flagship.hotspots.map((hs) => (
                 <button
                   key={hs.part}
-                  onClick={() => handleHotspotClick(hs.part, hs.label, hs.blurb)}
-                  className="text-left px-3 py-2 rounded transition-colors duration-200 cursor-pointer"
-                  style={{
-                    background: activeHotspot === hs.part
-                      ? 'color-mix(in srgb, var(--color-signal) 10%, transparent)'
-                      : 'var(--color-panel)',
-                    border: `1px solid ${activeHotspot === hs.part ? 'var(--color-signal)' : 'var(--color-line)'}`,
-                    fontFamily: 'var(--font-body)',
-                    color: 'var(--color-paper)',
-                  }}
+                  onClick={() => setActiveHotspot(activeHotspot === hs.part ? null : hs.part)}
+                  className={`hotspot-btn ${activeHotspot === hs.part ? 'active' : ''}`}
                   aria-expanded={activeHotspot === hs.part}
                 >
-                  <div className="text-sm font-medium" style={{ color: activeHotspot === hs.part ? 'var(--color-signal)' : 'var(--color-paper)' }}>
-                    {hs.label}
-                  </div>
+                  <div className="hotspot-btn-label">{hs.label}</div>
                   {activeHotspot === hs.part && (
-                    <div className="mt-1 text-xs text-muted" style={{ lineHeight: 1.5 }}>{hs.blurb}</div>
+                    <div className="hotspot-btn-blurb">{hs.blurb}</div>
                   )}
                 </button>
               ))}

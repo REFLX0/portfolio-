@@ -1,27 +1,21 @@
-import { useFlightStore } from '../store/useFlightStore.ts';
-import { waypoints } from '../data/profile.ts';
-import type { WaypointIndex } from '../data/profile.ts';
+import { useFlightStore } from '../store/useFlightStore';
+import { waypoints } from '../data/profile';
+import type { WaypointIndex } from '../data/profile';
 
 interface SectionEyebrowProps {
   waypointIndex: WaypointIndex;
-  label?: string;
 }
 
-export default function SectionEyebrow({ waypointIndex, label }: SectionEyebrowProps) {
+export default function SectionEyebrow({ waypointIndex }: SectionEyebrowProps) {
   const activeWaypoint = useFlightStore((s) => s.activeWaypoint);
   const wp = waypoints[waypointIndex];
-  const isActive = activeWaypoint === waypointIndex;
   return (
     <div
-      className="font-mono text-xs tracking-widest mb-4 transition-opacity duration-200"
-      style={{
-        fontFamily: 'var(--font-mono)',
-        color: isActive ? 'var(--color-signal)' : 'var(--color-line)',
-        opacity: isActive ? 1 : 0.6,
-      }}
+      className="section-eyebrow"
+      style={{ opacity: activeWaypoint === waypointIndex ? 1 : 0.5 }}
       aria-hidden="true"
     >
-      {wp.code} // {label ?? wp.label}
+      {wp.code} &mdash; {wp.label}
     </div>
   );
 }

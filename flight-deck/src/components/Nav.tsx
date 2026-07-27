@@ -1,6 +1,8 @@
 import { useFlightStore } from '../store/useFlightStore';
 import { waypoints } from '../data/profile';
 
+const labels = ['Home', 'Drone', 'Projects', 'Skills', 'Experience', 'Contact'];
+
 export default function Nav() {
   const activeWaypoint = useFlightStore((s) => s.activeWaypoint);
 
@@ -11,12 +13,18 @@ export default function Nav() {
 
   return (
     <nav
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-0.5 px-1.5 py-1 rounded-full"
+      className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
       style={{
-        background: 'color-mix(in srgb, var(--color-panel) 85%, transparent)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '2px',
+        padding: '4px',
+        borderRadius: '9999px',
+        background: 'color-mix(in srgb, var(--color-panel) 90%, transparent)',
         border: '1px solid var(--color-line)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
       }}
       aria-label="Page sections"
     >
@@ -24,19 +32,45 @@ export default function Nav() {
         <button
           key={wp.code}
           onClick={() => handleClick(i)}
-          className="px-2 py-1 rounded-full text-xs transition-colors duration-200 cursor-pointer"
+          className="hidden sm:inline-flex"
           style={{
+            padding: '6px 14px',
+            borderRadius: '9999px',
+            fontSize: '0.7rem',
             fontFamily: 'var(--font-mono)',
-            fontSize: '0.65rem',
+            letterSpacing: '0.03em',
+            fontWeight: i === activeWaypoint ? 600 : 400,
             color: i === activeWaypoint ? 'var(--color-ink)' : 'var(--color-paper)',
             background: i === activeWaypoint ? 'var(--color-signal)' : 'transparent',
-            fontWeight: i === activeWaypoint ? 600 : 400,
+            cursor: 'pointer',
+            border: 'none',
+            transition: 'all 200ms ease',
           }}
-          aria-label={`Go to ${wp.label}`}
+          aria-label={`Go to ${labels[i]}`}
           aria-current={i === activeWaypoint ? 'true' : undefined}
         >
-          {wp.code.replace('WP', '')}
+          {labels[i]}
         </button>
+      ))}
+      {/* Mobile: show only dot indicators */}
+      {waypoints.map((wp, i) => (
+        <button
+          key={wp.code}
+          onClick={() => handleClick(i)}
+          className="sm:hidden"
+          style={{
+            width: i === activeWaypoint ? 20 : 6,
+            height: 6,
+            borderRadius: 3,
+            background: i === activeWaypoint ? 'var(--color-signal)' : 'var(--color-line-light)',
+            cursor: 'pointer',
+            border: 'none',
+            padding: 0,
+            transition: 'all 200ms ease',
+          }}
+          aria-label={`Go to ${labels[i]}`}
+          aria-current={i === activeWaypoint ? 'true' : undefined}
+        />
       ))}
     </nav>
   );
