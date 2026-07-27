@@ -12,9 +12,7 @@ export default function ProjectGrid() {
         <p className="section-subtitle" style={{ marginBottom: '2rem' }}>
           A selection of engineering work spanning AI, IoT, full-stack, DevOps, and computer vision.
         </p>
-        <div className="bento-grid" style={{
-          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
-        }}>
+        <div className="bento-grid">
           {projects.map((project) => (
             <ProjectCard key={project.title} project={project} />
           ))}

@@ -23,13 +23,12 @@ export default function ScrollReveal({ children, className, delay = 0 }: ScrollR
     const ctx = gsap.context(() => {
       gsap.fromTo(
         el,
-        { y: 30, opacity: 0 },
+        { y: 40, opacity: 0, scale: 0.97 },
         {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
+          y: 0, opacity: 1, scale: 1,
+          duration: 0.8,
           delay,
-          ease: 'power2.out',
+          ease: 'back.out(1.4)',
           scrollTrigger: {
             trigger: el,
             start: 'top 90%',

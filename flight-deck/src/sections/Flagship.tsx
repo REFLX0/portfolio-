@@ -8,7 +8,7 @@ export default function Flagship() {
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
 
   return (
-    <section data-waypoint={1} aria-label="Primary Mission — Autonomous Drone Project">
+    <section data-waypoint={1} aria-label="Primary Mission">
       <div className="section-wrap">
         <SectionEyebrow waypointIndex={1} />
         <h2 className="section-title">{flagship.title}</h2>
@@ -32,12 +32,9 @@ export default function Flagship() {
 
           <div>
             <p style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.65rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: 'var(--color-paper)',
-              marginBottom: '0.75rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
+              letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: 'var(--color-text-tertiary)', marginBottom: '0.75rem',
             }}>
               Subsystem Overview
             </p>

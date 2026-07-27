@@ -15,16 +15,12 @@ export default function Nav() {
     <nav
       className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '2px',
-        padding: '4px',
-        borderRadius: '9999px',
-        background: 'color-mix(in srgb, var(--color-panel) 90%, transparent)',
-        border: '1px solid var(--color-line)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+        display: 'flex', alignItems: 'center', gap: '2px',
+        padding: '5px', borderRadius: '9999px',
+        background: 'rgba(255,255,255,0.8)',
+        border: '1.5px solid var(--color-border-light)',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
       }}
       aria-label="Page sections"
     >
@@ -34,17 +30,16 @@ export default function Nav() {
           onClick={() => handleClick(i)}
           className="hidden sm:inline-flex"
           style={{
-            padding: '6px 14px',
-            borderRadius: '9999px',
-            fontSize: '0.7rem',
-            fontFamily: 'var(--font-mono)',
+            padding: '7px 14px', borderRadius: '9999px',
+            fontSize: '0.72rem', fontFamily: 'var(--font-mono)',
             letterSpacing: '0.03em',
             fontWeight: i === activeWaypoint ? 600 : 400,
-            color: i === activeWaypoint ? 'var(--color-ink)' : 'var(--color-paper)',
-            background: i === activeWaypoint ? 'var(--color-signal)' : 'transparent',
-            cursor: 'pointer',
-            border: 'none',
-            transition: 'all 200ms ease',
+            color: i === activeWaypoint ? '#fff' : 'var(--color-text-secondary)',
+            background: i === activeWaypoint
+              ? 'linear-gradient(135deg, var(--color-accent), var(--color-violet))'
+              : 'transparent',
+            cursor: 'pointer', border: 'none',
+            transition: 'all 300ms cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
           aria-label={`Go to ${labels[i]}`}
           aria-current={i === activeWaypoint ? 'true' : undefined}
@@ -52,24 +47,21 @@ export default function Nav() {
           {labels[i]}
         </button>
       ))}
-      {/* Mobile: show only dot indicators */}
       {waypoints.map((wp, i) => (
         <button
           key={wp.code}
           onClick={() => handleClick(i)}
           className="sm:hidden"
           style={{
-            width: i === activeWaypoint ? 20 : 6,
-            height: 6,
-            borderRadius: 3,
-            background: i === activeWaypoint ? 'var(--color-signal)' : 'var(--color-line-light)',
-            cursor: 'pointer',
-            border: 'none',
-            padding: 0,
-            transition: 'all 200ms ease',
+            width: i === activeWaypoint ? 22 : 7, height: 7,
+            borderRadius: 4,
+            background: i === activeWaypoint
+              ? 'linear-gradient(90deg, var(--color-accent), var(--color-violet))'
+              : 'var(--color-border)',
+            cursor: 'pointer', border: 'none', padding: 0,
+            transition: 'all 300ms ease',
           }}
           aria-label={`Go to ${labels[i]}`}
-          aria-current={i === activeWaypoint ? 'true' : undefined}
         />
       ))}
     </nav>

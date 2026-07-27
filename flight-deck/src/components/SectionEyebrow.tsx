@@ -12,7 +12,7 @@ export default function SectionEyebrow({ waypointIndex }: SectionEyebrowProps) {
   return (
     <div
       className="section-eyebrow"
-      style={{ opacity: activeWaypoint === waypointIndex ? 1 : 0.5 }}
+      style={{ opacity: activeWaypoint === waypointIndex ? 1 : 0.45 }}
       aria-hidden="true"
     >
       {wp.code} &mdash; {wp.label}
