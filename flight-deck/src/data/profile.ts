@@ -134,6 +134,20 @@ export const profile = {
     { category: 'Technical Writing', items: ['LaTeX', 'Academic paper writing', 'Technical specification documents'] },
   ],
 
+
+  experience: {
+    title: 'Full-Stack Developer — Mahdia Blue & Green Platform',
+    org: 'Ordre des Ingénieurs Tunisiens (OIT Mahdia)',
+    label: 'Dec 2024 – May 2025 · 6 months',
+    points: [
+      'Developed a full-stack web application promoting sustainable blue, green, and circular-economy initiatives in Mahdia, Tunisia',
+      'Built a monorepo architecture with React 19 / Vite frontend and Node.js / Express.js backend, connected via REST API',
+      'Implemented article and event management, user authentication (JWT), a contact system, and slug-based routing',
+      'Designed MongoDB/Mongoose data models, deployment scripts, and a shared types layer across workspaces',
+    ],
+    stack: ['React 19', 'React Router 7', 'Vite', 'Node.js', 'Express.js', 'MongoDB', 'Mongoose', 'JWT'],
+  },
+
   internship: {
     title: 'Embedded IoT Gateway \u2014 NF E 60-182 Compliance',
     org: 'C.S.T, Tunisia',

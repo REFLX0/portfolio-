@@ -3,15 +3,15 @@ import SectionEyebrow from '../components/SectionEyebrow';
 import Badge from '../components/Badge';
 
 export default function Timeline() {
-  const { education, internship, attributes } = profile;
+  const { education, experience, internship, attributes } = profile;
 
   const entries = [
     {
-      title: education.degree,
-      org: education.school,
-      detail: education.honor,
-      points: [],
-      stack: [] as string[],
+      title: experience.title,
+      org: experience.org,
+      detail: experience.label,
+      points: experience.points,
+      stack: experience.stack,
     },
     {
       title: internship.title,
@@ -20,15 +20,22 @@ export default function Timeline() {
       points: internship.points,
       stack: internship.stack,
     },
+    {
+      title: education.degree,
+      org: education.school,
+      detail: education.honor,
+      points: [],
+      stack: [] as string[],
+    },
   ];
 
   return (
-    <section data-waypoint={4} aria-label="Education and Internship">
+    <section data-waypoint={4} aria-label="Experience and Education">
       <div className="section-wrap">
         <SectionEyebrow waypointIndex={4} />
         <h2 className="section-title">Experience</h2>
         <p className="section-subtitle" style={{ marginBottom: '2.5rem' }}>
-          Academic foundation and industry exposure shaping a multidisciplinary engineering skillset.
+          From a 6-month full-stack role at OIT Mahdia to embedded IoT internships and academic distinction.
         </p>
 
         <div className="flagship-grid">
